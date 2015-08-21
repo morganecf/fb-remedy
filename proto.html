@@ -1,0 +1,128 @@
+<!-- 
+	Prototype of what the extension will look like 
+
+	TODO: "you could have done ___ in that amount of time"
+	TODO: "You have spent % of your week, and ~% of your life so far on facebook"
+	TODO: log and stats 
+
+	TODO: Fade/gradient colors (ex: pink -> red)
+
+--> 
+
+<html>
+
+<head>
+	<style>
+		body {
+			background: #333;
+		}
+
+	</style>
+
+	<script src="jquery.min.js" type="text/javascript"></script>
+	<script src="raphael.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+			// Get the page height and width 
+			var height = $(document).height();
+			var width = $(document).width();
+
+			// Make the canvas the size of the page 
+			var paper = Raphael(0, 100, width, height);
+
+			var start = 100,
+				end = width - 100,
+				length = end - 100,
+				opac = 0.5,
+				fill = "#fff";
+
+			// TODO; BETTER
+			var y_start = 80;
+			var y_starts = {
+				seconds: y_start,
+				minutes: y_start * 2,
+				hours: y_start * 3
+			};
+
+			var radii = {
+				seconds: 1,
+				minutes: 3,
+				hours: 5
+			};
+
+			var c, space;
+
+			// The seconds line (60 points)
+			space = length / 60.0;
+			var seconds = [];
+			for (var i = 0; i < 60; i++) {
+				c = paper.circle(start + (i * space), y_starts.seconds, radii.seconds);
+				c.attr({"fill": fill, "opacity": opac, "stroke": "none"});
+				seconds.push(c);
+			}
+
+			// The minutes line (60 points)
+			var minutes = [];
+			for (var i = 0; i < 60; i++) {
+				c = paper.circle(start + (i * space), y_starts.minutes, radii.minutes);
+				c.attr({"fill": fill, "opacity": opac, "stroke": "none"});
+				minutes.push(c);
+			}
+
+			// The hours line (24 points)
+			space = length / 24.0;
+			var hours = [];
+			for (var i = 0; i < 24; i++) {
+				c = paper.circle(start + (i * space), y_starts.hours, radii.hours);
+				c.attr({"fill": fill, "opacity": opac, "stroke": "none"});
+				hours.push(c);
+			}
+
+			// Animates a line given the time interval and final time point
+			function animate_line (a, fx, fy, color, stroke_width) {
+				var x = a[0].attrs.cx - 10,
+					y = a[0].attrs.cy;
+
+				var l = paper.path("M" + x + "," + y + "L" + x + "," + y);
+				l.attr({"stroke": color, "stroke-width": stroke_width});
+				l.animate({"path": [l.attrs.path[0], ["L", fx, fy]]}, 500, "<");	 // ease in 
+			}
+
+			// Get the time spent
+			$("#button").click(function () {
+				var ts = $("#time-spent").val().split(":");
+				var h = parseInt(ts[0]),
+					m = parseInt(ts[1]),
+					s = parseInt(ts[2]);
+
+				// Animate seconds line  
+				animate_line(seconds, seconds[s - 1].attrs.cx, seconds[s - 1].attrs.cy, "#CEF7CD", 10);
+
+				// Animate the minutes line 
+				animate_line(minutes, minutes[m - 1].attrs.cx, minutes[m - 1].attrs.cy, "#C3E5DD", 20);
+
+				// Animate the hours line 
+				animate_line(hours, hours[h - 1].attrs.cx, hours[h - 1].attrs.cy, "#F0DCE1", 30);
+
+			});
+
+
+			/*
+				Themes: 
+					2) #D5F903, #FA0202, #00C29E 
+					3) #BFFF71, #7FD7EF, #7A82E7, #BA00B1, #CD0077
+					4) CEF7CD, A3E4DB, C3E5DD, E0E3FB, F0DCE1
+			*/
+
+		});
+		
+
+	</script>
+</head>
+
+<body>
+	<input id="time-spent" type="text"/><button id="button">submit</button>
+</body>
+
+</html>
