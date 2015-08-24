@@ -1,0 +1,20 @@
+{
+  "name": "FB Control",
+  "version": "1.0",
+  "manifest_version": 2,  // v1 unspported as of Jan 2014
+  "description": "Monitors how much time you spent on FB and displays it prettily",
+  
+  // Override the new tab page
+  "chrome_url_overrides": {
+    "newtab": "proto.html"
+  },
+
+  // Allow use of jquery and raphael 
+  "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["jquery.min.js", "raphael.min.js"]
+      }
+   ]
+
+}
