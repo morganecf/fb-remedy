@@ -59,33 +59,28 @@ chrome.tabs.query({}, function (tabs) {
 // Detect going to facebook events and navigating away 
 // from facebook events. 
 chrome.tabs.onUpdated.addListener(function (tab_id, change_info, tab) {
-	// We only care about loaded events. User could change
-	// their mind halfway through. 
-	if (change_info.status == "complete") {
+	log(tab.url);
 
-		log(tab.url);
-
-		// Case 1: tab already being tracked and left facebook
-		if (tab_id in fbtabs && !onFacebook(tab.url)) {
-			delete fbtabs[tab_id];
-			
-			// Only stop timer if no other tabs on fb 
-			if (isEmptyObject(fbtabs)) {
-				log("stopping timer");
-				timer.stop();
-				log("left fb. time so far:" + (timer.total / 1000) + ' seconds');
-			}
+	// Case 1: tab already being tracked and left facebook
+	if (tab_id in fbtabs && !onFacebook(tab.url)) {
+		delete fbtabs[tab_id];
+		
+		// Only stop timer if no other tabs on fb 
+		if (isEmptyObject(fbtabs)) {
+			log("stopping timer");
+			timer.stop();
+			log("left fb. time so far:" + (timer.total / 1000) + ' seconds');
 		}
-		// Case 2: tab not already tracked and went to fb
-		else if (!(tab_id in fbtabs) && onFacebook(tab.url)) {
-			// If timer wasn't already started, start 
-			if (isEmptyObject(fbtabs)) {
-				log("opened fb. starting timer");
-				timer.start();
-			}
-
-			fbtabs[tab_id] = tab;
+	}
+	// Case 2: tab not already tracked and went to fb
+	else if (!(tab_id in fbtabs) && onFacebook(tab.url)) {
+		// If timer wasn't already started, start 
+		if (isEmptyObject(fbtabs)) {
+			log("opened fb. starting timer");
+			timer.start();
 		}
+
+		fbtabs[tab_id] = tab;
 	}
 });
 
