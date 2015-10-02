@@ -6,7 +6,7 @@
   
   // Override the new tab page
   "chrome_url_overrides": {
-    "newtab": "proto.html"
+    "newtab": "newtab.html"
   },
 
   // Allow use of jquery and raphael 
@@ -15,6 +15,16 @@
         "matches": ["<all_urls>"],
         "js": ["jquery.min.js", "raphael.min.js"]
       }
-   ]
+   ],
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+
+  // To allow access to tab information
+  "permissions": [
+    "tabs"
+  ]
 
 }

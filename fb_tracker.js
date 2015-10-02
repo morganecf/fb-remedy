@@ -1,4 +1,7 @@
+/* The animation functionality */
+
 $(document).ready(function () {
+
 	// Get the page height and width 
 	var height = $(document).height();
 	var width = $(document).width();
@@ -69,8 +72,6 @@ $(document).ready(function () {
 	hours_spent.attr({"fill": colors.hours, "font-size": font_size});
 	minutes_spent.attr({"fill": colors.minutes, "font-size": font_size});
 	seconds_spent.attr({"fill": colors.seconds, "font-size": font_size});
-
-	console.log(hours_spent);
 
 	// Animates a line given the time interval and final time point
 	function animate_line (a, fx, fy, color, stroke_width) {
