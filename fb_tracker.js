@@ -7,7 +7,7 @@ $(document).ready(function () {
 	var width = $(document).width();
 
 	// Make the canvas the size of the page 
-	var paper = Raphael(0, 100, width, height);
+	var paper = Raphael(0, 0, width, height);
 
 	var start = 100,
 		end = width - 100,
@@ -36,7 +36,7 @@ $(document).ready(function () {
 		hours: "#CD0077"
 	};
 
-	var c, space;
+	var c, space, last_cx;
 
 	// The seconds line (60 points)
 	space = length / 60.0;
@@ -50,13 +50,14 @@ $(document).ready(function () {
 	// The minutes line (60 points)
 	var minutes = [];
 	for (var i = 0; i < 60; i++) {
-		c = paper.circle(start + (i * space), y_starts.minutes, radii.minutes);
+		last_cx = start + (i * space);
+		c = paper.circle(last_cx, y_starts.minutes, radii.minutes);
 		c.attr({"fill": fill, "opacity": opac, "stroke": "none"});
 		minutes.push(c);
 	}
 
 	// The hours line (24 points)
-	space = length / 24.0;
+	space = (last_cx - start) / 23.0;
 	var hours = [];
 	for (var i = 0; i < 24; i++) {
 		c = paper.circle(start + (i * space), y_starts.hours, radii.hours);
@@ -134,6 +135,15 @@ $(document).ready(function () {
 		3) #BFFF71, #7FD7EF, #7A82E7, #BA00B1, #CD0077: http://www.colourlovers.com/palette/1430577/melting_popsicles
 		4) CEF7CD, A3E4DB, C3E5DD, E0E3FB, F0DCE1: http://www.colourlovers.com/palette/2909600/p_o_p_s_i_c_l_e
 		==================
+
+		TO DO 
+		- add total time
+		- add percentage time wasted
+		- add refresh 
+
+		- fix animation (both should be aligned)
+
+		- communication between front and background 
 	*/
 
 });		
