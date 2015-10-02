@@ -2,20 +2,26 @@
 
 $(document).ready(function () {
 
+	// The total time the app has been running, in seconds
+	var running = 432000;	// Test case: 5 days
+
 	// Get the page height and width 
 	var height = $(document).height();
 	var width = $(document).width();
 
 	// Make the canvas the size of the page 
-	var paper = Raphael(0, 0, width, height);
+	var paper = Raphael(0, 40, width, height);
 
 	var start = 100,
 		end = width - 100,
 		length = end - 100,
 		opac = 0.5,
+		opac2 = 0.95,
 		fill = "#fff",
-		font_size = 100;
+		font_size = 100,
+		font_size2 = 40;
 
+	// The height of each time line 
 	var y_start = 80;
 	var y_starts = {
 		seconds: y_start,
@@ -23,6 +29,7 @@ $(document).ready(function () {
 		hours: y_start * 3
 	};
 
+	// Radius of each timeline dot 
 	var radii = {
 		seconds: 1,
 		minutes: 3,
@@ -65,14 +72,20 @@ $(document).ready(function () {
 		hours.push(c);
 	}
 
-	// The text to display the total time spent 
+	// The text to display the total time spent on facebook
 	var hours_spent = paper.text(width / 2 - 140, y_starts.hours + 150, "00:");
 	var minutes_spent = paper.text(width / 2, y_starts.hours + 150, "00:");
 	var seconds_spent = paper.text(width / 2 + 130, y_starts.hours + 150, "00");
 
+	// The text to display the percentage of time wasted 
+	var wasted_str = function (p) { return p + "% time wasted"; };
+	var wasted = paper.text(width / 2 - 10, y_starts.hours + 260, wasted_str(0));
+
+	// Styles for all the text elements 
 	hours_spent.attr({"fill": colors.hours, "font-size": font_size});
 	minutes_spent.attr({"fill": colors.minutes, "font-size": font_size});
 	seconds_spent.attr({"fill": colors.seconds, "font-size": font_size});
+	wasted.attr({"fill": "#fff", "font-size": font_size2, "opacity": opac2});
 
 	// Animates a line given the time interval and final time point
 	function animate_line (a, fx, fy, color, stroke_width) {
@@ -125,6 +138,13 @@ $(document).ready(function () {
 		animate_time(s, seconds_spent, false);
 		animate_time(m, minutes_spent, true);
 		animate_time(h, hours_spent, true);
+
+		// Figure out percentage of time that was wasted
+		var time_in_s = (h * 24 * 60) + (m * 60) + s;
+		var p = Math.round((time_in_s / running) * 100);
+
+		// Update the percentage time wasted 
+		wasted[0].textContent = wasted_str(p);
 
 	});
 
