@@ -1,2 +1,2 @@
 # fb-remedy
-Chrome extension that scares you into no longer going on facebook
+Chrome extension that shames you for spending an insufferable amount of time on facebook. 
