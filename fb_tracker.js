@@ -3,7 +3,17 @@
 $(document).ready(function () {
 
 	// The total time the app has been running, in seconds
-	var running = 432000;	// Test case: 5 days
+	var running = 180348;	// Test case: 2 days, 2 hours, 5 minutes, 48 seconds
+
+	// Return the total time running in proper format format 
+	var format_running = function () {
+		var days = Math.floor(running / 86400);
+		var left = ((running / 86400) - days) * 86400;
+		var hours = parseInt(running / 3600) % 24;
+		var minutes = parseInt(running / 60) % 60;
+		var seconds = running % 60;
+		return days + 'd, ' + hours + 'h, ' + minutes + 'm, ' + seconds + 's';
+	};
 
 	// Get the page height and width 
 	var height = $(document).height();
@@ -87,6 +97,9 @@ $(document).ready(function () {
 	seconds_spent.attr({"fill": colors.seconds, "font-size": font_size});
 	wasted.attr({"fill": "#fff", "font-size": font_size2, "opacity": opac2});
 
+
+	/* Animation functions */
+
 	// Animates a line given the time interval and final time point
 	function animate_line (a, fx, fy, color, stroke_width) {
 		var x = a[0].attrs.cx - 10,
@@ -100,6 +113,7 @@ $(document).ready(function () {
 	// Steps through a set of numbers
 	function animate_time (n, text, colon) {
 		var i = parseInt(text[0].textContent.split(":")[0]);
+		var inc = 500 / n;
 
 		var step = function () {
 			if (i == n) return;
@@ -112,19 +126,14 @@ $(document).ready(function () {
 			if (colon) text[0].textContent += ":";
 
 			i ++;
-			setTimeout(step, 50);
+			setTimeout(step, inc);
 		};
 
 		setTimeout(step, 1);
 	}
 
-	// Get the time spent
-	$("#button").click(function () {
-		var ts = $("#time-spent").val().split(":");
-		var h = parseInt(ts[0]),
-			m = parseInt(ts[1]),
-			s = parseInt(ts[2]);
-
+	// Animates everything given a time spent
+	function animate (h, m, s) {
 		// Animate seconds line  
 		animate_line(seconds, seconds[s - 1].attrs.cx, seconds[s - 1].attrs.cy, colors.seconds, 10);
 
@@ -145,8 +154,61 @@ $(document).ready(function () {
 
 		// Update the percentage time wasted 
 		wasted[0].textContent = wasted_str(p);
+	};
 
+
+	/* Event handlers */
+
+	// Get the time spent
+	$("#button").click(function () {
+		var ts = $("#time-spent").val().split(":");
+		var h = parseInt(ts[0]),
+			m = parseInt(ts[1]),
+			s = parseInt(ts[2]);
+
+		animate(h, m, s);
 	});
+
+	// Elements associated with refresh button
+	var l1, l2, t1, t2;
+
+	// Refresh button functionality 
+	$("#refresh").click(function () {
+		var reset = confirm("Are you sure you want to reset everything?");
+		if (reset) animate(0, 0, 0);
+
+	}).mouseenter(function () {
+		// Display total time running 
+		var startx = 55, starty = 0, dx = 250, width1 = 50, width2 = 30;
+		l1 = paper.path("M" + startx + "," + starty + "L" + startx + "," + starty);
+		l1.attr({"stroke": "#eee", "stroke-width": 50, "stroke-linecap": "butt"});
+		l1.animate({"path": [l1.attrs.path[0], ["L", dx, starty]]}, dx * 0.8, "<", function () {
+			// Display text 
+			t1 = paper.text(startx + 95, starty + 11, "Runtime: " + format_running());
+			t1.attr({fill: "#333", "font-size": 15});
+		});
+
+		l2 = paper.path("M" + startx + "," + (starty + width2) + "L" + startx + "," + (starty + width2));
+		l2.attr({"stroke": "#00C29E", "stroke-width": 15, "stroke-linecap": "butt"});
+			// or 80637C or 00C29E
+		l2.animate({"path": [l2.attrs.path[0], ["L", dx, (starty + width2)]]}, dx * 0.8, "<", function () {
+			// Display text 
+			t2 = paper.text(startx + 92, starty + width2, "Clicking the refresh button will reset the timer.");
+			t2.attr({fill: "#fff", "font-size": 8});
+		});
+
+	}).mouseleave(function () {
+		// Hide total time running 
+		l1.remove();
+		l2.remove();
+		t1.remove();
+		t2.remove();
+	});
+
+
+	// Test case: have spent 8 hours, 45 minutes, 55 seconds on facebook 
+	var test = {h: 8, m: 45, s: 55};
+	animate(test.h, test.m, test.s);
 
 
 	/*
@@ -157,12 +219,6 @@ $(document).ready(function () {
 		==================
 
 		TO DO 
-		- add total time
-		- add percentage time wasted
-		- add refresh 
-
-		- fix animation (both should be aligned)
-
 		- communication between front and background 
 	*/
 
