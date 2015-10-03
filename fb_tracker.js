@@ -20,7 +20,7 @@ $(document).ready(function () {
 	var width = $(document).width();
 
 	// Make the canvas the size of the page 
-	var paper = Raphael(0, 40, width, height);
+	var paper = Raphael(0, 15, width, height);
 
 	var start = 100,
 		end = width - 100,
@@ -178,22 +178,25 @@ $(document).ready(function () {
 		if (reset) animate(0, 0, 0);
 
 	}).mouseenter(function () {
+		// button is 42 x 38
+
 		// Display total time running 
-		var startx = 55, starty = 0, dx = 250, width1 = 50, width2 = 30;
+		var startx = 55, starty = 0, dx = 250, width1 = 45, width2 = 31;
 		l1 = paper.path("M" + startx + "," + starty + "L" + startx + "," + starty);
-		l1.attr({"stroke": "#eee", "stroke-width": 50, "stroke-linecap": "butt"});
+		l1.attr({"stroke": "#eee", "stroke-width": width1, "stroke-linecap": "butt"});
 		l1.animate({"path": [l1.attrs.path[0], ["L", dx, starty]]}, dx * 0.8, "<", function () {
 			// Display text 
-			t1 = paper.text(startx + 95, starty + 11, "Runtime: " + format_running());
+			t1 = paper.text(startx + 97, starty + 11, "Runtime: " + format_running());
 			t1.attr({fill: "#333", "font-size": 15});
 		});
 
-		l2 = paper.path("M" + startx + "," + (starty + width2) + "L" + startx + "," + (starty + width2));
-		l2.attr({"stroke": "#00C29E", "stroke-width": 15, "stroke-linecap": "butt"});
-			// or 80637C or 00C29E
-		l2.animate({"path": [l2.attrs.path[0], ["L", dx, (starty + width2)]]}, dx * 0.8, "<", function () {
+		var offset = 30;
+		l2 = paper.path("M" + startx + "," + (starty + offset) + "L" + startx + "," + (starty + offset));
+		l2.attr({"stroke": "#FA0202", "stroke-width": 16, "stroke-linecap": "butt"});
+			// or 80637C or 00C29E or 7FD7EF
+		l2.animate({"path": [l2.attrs.path[0], ["L", dx, (starty + offset)]]}, dx * 0.8, "<", function () {
 			// Display text 
-			t2 = paper.text(startx + 92, starty + width2, "Clicking the refresh button will reset the timer.");
+			t2 = paper.text(startx + 95, starty + offset, "Clicking the refresh button will reset the timer.");
 			t2.attr({fill: "#fff", "font-size": 8});
 		});
 
