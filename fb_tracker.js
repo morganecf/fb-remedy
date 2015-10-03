@@ -112,7 +112,7 @@ $(document).ready(function () {
 
 	// Steps through a set of numbers
 	function animate_time (n, text, colon) {
-		var i = parseInt(text[0].textContent.split(":")[0]);
+		var i = parseInt(text[0].textContent.split(":")[0]) - 1;
 		var inc = 500 / n;
 
 		var step = function () {
@@ -135,13 +135,13 @@ $(document).ready(function () {
 	// Animates everything given a time spent
 	function animate (h, m, s) {
 		// Animate seconds line  
-		animate_line(seconds, seconds[s - 1].attrs.cx, seconds[s - 1].attrs.cy, colors.seconds, 10);
+		if (s > 0) animate_line(seconds, seconds[s - 1].attrs.cx, seconds[s - 1].attrs.cy, colors.seconds, 10);
 
 		// Animate the minutes line 
-		animate_line(minutes, minutes[m - 1].attrs.cx, minutes[m - 1].attrs.cy, colors.minutes, 20);
+		if (m > 0) animate_line(minutes, minutes[m - 1].attrs.cx, minutes[m - 1].attrs.cy, colors.minutes, 20);
 
 		// Animate the hours line 
-		animate_line(hours, hours[h - 1].attrs.cx, hours[h - 1].attrs.cy, colors.hours, 30);
+		if (h > 0) animate_line(hours, hours[h - 1].attrs.cx, hours[h - 1].attrs.cy, colors.hours, 30);
 
 		// Display the total time (flip through s/m/h)
 		animate_time(s, seconds_spent, false);
@@ -209,9 +209,27 @@ $(document).ready(function () {
 	});
 
 
+	/* Interacting with background script */
+
+	// Query local storage for total time app has been running
+	chrome.storage.local.get('fb-app-start', function (d) {
+		running = Math.ceil((Date.now() - d['fb-app-start']) / 1000);
+	});
+
+	// Query local storage for total time spent on fb 
+	chrome.storage.local.get('fb-track-time', function (d) {
+		var seconds = parseInt(d['fb-track-time'] / 1000);
+		var h = parseInt(seconds / 3600) % 24;
+		var m = parseInt(seconds / 60) % 60;
+		var s = seconds % 60;
+
+		animate(h, m, s);
+	});
+
+
 	// Test case: have spent 8 hours, 45 minutes, 55 seconds on facebook 
-	var test = {h: 8, m: 45, s: 55};
-	animate(test.h, test.m, test.s);
+	// var test = {h: 8, m: 45, s: 55};
+	// animate(test.h, test.m, test.s);
 
 
 	/*
@@ -222,7 +240,9 @@ $(document).ready(function () {
 		==================
 
 		TO DO 
-		- communication between front and background 
+		- shouldn't be resetting! 
+		- reset functionality
+		- make sure runtime information is aligned for all screen sizes 
 	*/
 
 });		

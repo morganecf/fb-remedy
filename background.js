@@ -42,7 +42,26 @@ var timer = function () {
 // Keep track of tabs that are visiting facebook. 
 var fbtabs = {};
 
-// First get currently opened tabs and see if facebook is 
+// First get the total spent/app running times from local storage
+chrome.storage.local.get("fb-track-time", function (d) {
+	log('getting time data');
+
+	// This is the first time we're using the app or we've reset it
+	if (Object.keys(d).length === 0) {
+		log('app blank, setting fb-app-start');
+		chrome.storage.local.set({'fb-app-start': Date.now()});
+	}
+
+	// Otherwise we're in the middle of using it 
+	else {
+		log('app not blank');
+		log(d.get('fb-track-time'));
+
+		timer.total = d.get('fb-track-time');
+	}
+});
+
+// Next get currently opened tabs and see if facebook is 
 // one of them. Track these tabs.  
 chrome.tabs.query({}, function (tabs) {
 	var startTime = false;
@@ -67,16 +86,21 @@ chrome.tabs.onUpdated.addListener(function (tab_id, change_info, tab) {
 		
 		// Only stop timer if no other tabs on fb 
 		if (isEmptyObject(fbtabs)) {
-			log("stopping timer");
 			timer.stop();
 			log("left fb. time so far:" + (timer.total / 1000) + ' seconds');
+
+			// Update local storage 
+			chrome.storage.local.set({"fb-track-time": timer.total}, function () {
+				log('setting time data');
+			});
 		}
+
 	}
 	// Case 2: tab not already tracked and went to fb
 	else if (!(tab_id in fbtabs) && onFacebook(tab.url)) {
 		// If timer wasn't already started, start 
 		if (isEmptyObject(fbtabs)) {
-			log("opened fb. starting timer");
+			log('starting timer');
 			timer.start();
 		}
 
@@ -94,6 +118,16 @@ chrome.tabs.onRemoved.addListener(function (tab_id, change_info) {
 		if (isEmptyObject(fbtabs)) {
 			timer.stop();
 			log("left fb. time so far:" + (timer.total / 1000) + ' seconds');
+
+			// Update local storage 
+			chrome.storage.local.set({"fb-track-time": timer.total}, function () {
+				log('setting time data');
+			});
+		}
+
+		else {
+			log('not empty');
+			log(fbtabs);
 		}
 	}
 });
