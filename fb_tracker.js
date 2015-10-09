@@ -25,8 +25,8 @@ $(document).ready(function () {
 	var start = 100,
 		end = width - 100,
 		length = end - 100,
-		opac = 0.5,
-		opac2 = 0.95,
+		opac = 1,		// originally 0.5
+		opac2 = 1,		// 
 		fill = "#fff",
 		font_size = 100,
 		font_size2 = 40;
@@ -106,7 +106,7 @@ $(document).ready(function () {
 			y = a[0].attrs.cy;
 
 		var l = paper.path("M" + x + "," + y + "L" + x + "," + y);
-		l.attr({"stroke": color, "stroke-width": stroke_width, "stroke-linecap": "butt"});
+		l.attr({"stroke": color, "stroke-width": stroke_width, "stroke-linecap": "butt", opacity: 0.7});
 		l.animate({"path": [l.attrs.path[0], ["L", fx, fy]]}, 500, "<");	 // ease in 
 	}
 
@@ -181,31 +181,31 @@ $(document).ready(function () {
 		// button is 42 x 38
 
 		// Display total time running 
-		var startx = 55, starty = 0, dx = 250, width1 = 45, width2 = 31;
-		l1 = paper.path("M" + startx + "," + starty + "L" + startx + "," + starty);
-		l1.attr({"stroke": "#eee", "stroke-width": width1, "stroke-linecap": "butt"});
-		l1.animate({"path": [l1.attrs.path[0], ["L", dx, starty]]}, dx * 0.8, "<", function () {
-			// Display text 
-			t1 = paper.text(startx + 97, starty + 11, "Runtime: " + format_running());
-			t1.attr({fill: "#333", "font-size": 15});
-		});
+		// var startx = 55, starty = 0, dx = 250, width1 = 45, width2 = 31;
+		// l1 = paper.path("M" + startx + "," + starty + "L" + startx + "," + starty);
+		// l1.attr({"stroke": "#eee", "stroke-width": width1, "stroke-linecap": "butt"});
+		// l1.animate({"path": [l1.attrs.path[0], ["L", dx, starty]]}, dx * 0.8, "<", function () {
+		// 	// Display text 
+		// 	t1 = paper.text(startx + 97, starty + 11, "Runtime: " + format_running());
+		// 	t1.attr({fill: "#333", "font-size": 15});
+		// });
 
-		var offset = 30;
-		l2 = paper.path("M" + startx + "," + (starty + offset) + "L" + startx + "," + (starty + offset));
-		l2.attr({"stroke": "#FA0202", "stroke-width": 16, "stroke-linecap": "butt"});
-			// or 80637C or 00C29E or 7FD7EF
-		l2.animate({"path": [l2.attrs.path[0], ["L", dx, (starty + offset)]]}, dx * 0.8, "<", function () {
-			// Display text 
-			t2 = paper.text(startx + 95, starty + offset, "Clicking the refresh button will reset the timer.");
-			t2.attr({fill: "#fff", "font-size": 8});
-		});
+		// var offset = 30;
+		// l2 = paper.path("M" + startx + "," + (starty + offset) + "L" + startx + "," + (starty + offset));
+		// l2.attr({"stroke": "#FA0202", "stroke-width": 16, "stroke-linecap": "butt"});
+		// 	// or 80637C or 00C29E or 7FD7EF
+		// l2.animate({"path": [l2.attrs.path[0], ["L", dx, (starty + offset)]]}, dx * 0.8, "<", function () {
+		// 	// Display text 
+		// 	t2 = paper.text(startx + 95, starty + offset, "Clicking the refresh button will reset the timer.");
+		// 	t2.attr({fill: "#fff", "font-size": 8});
+		// });
 
 	}).mouseleave(function () {
 		// Hide total time running 
-		l1.remove();
-		l2.remove();
-		t1.remove();
-		t2.remove();
+		// l1.remove();
+		// l2.remove();
+		// t1.remove();
+		// t2.remove();
 	});
 
 
@@ -243,6 +243,9 @@ $(document).ready(function () {
 		- shouldn't be resetting! 
 		- reset functionality
 		- make sure runtime information is aligned for all screen sizes 
+		- sometimes doesn't see that it's going to facebook!??!?
+		- sometimes newtab is just blank?? 
+		- should really make it time only when the fb/netflix tab is active 
 	*/
 
 });		
